@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     float defaultMoveSpeed;
     public Animator anim;
+    public UIManager uiManager;
 
     // Start is called before the first frame update
     void Start()
@@ -26,8 +27,9 @@ public class PlayerController : MonoBehaviour
         IsGrounded();
         //makes played move on the x axis
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * moveSpeed, rb.velocity.y);
-
+        
         anim.SetBool("isPlayerGrounded", IsGrounded());
+
 
         if (Input.GetAxis("Horizontal") != 0 && IsGrounded())
         {
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("isPlayerRunning", false);
         }
 
+
         if (Input.GetAxis("Horizontal") > 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
@@ -47,13 +50,15 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(-1, 1, 1);
         }
 
+
         //makes played move on the y axis if the space key is pressed and the player is grounded
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
+
         }
 
-        //attack
+        //attack if E ia pressed
         if (Input.GetKeyDown(KeyCode.E))
         {
             anim.SetBool("isPlayerAttacking", true);
@@ -62,8 +67,6 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetBool("isPlayerAttacking", false);
         }
-
-
 
 
     }
@@ -87,6 +90,16 @@ public class PlayerController : MonoBehaviour
         Debug.DrawRay(boxCollider2d.bounds.center, Vector2.down * (boxCollider2d.bounds.extents.y + extraHeightText));
 
         return raycastHit.collider != null;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        //coin collection
+        if (other.gameObject.tag == "Coin")
+        {
+            Destroy(other.gameObject);
+            uiManager.coinAmount =+ 1;
+        }
     }
 
 }
